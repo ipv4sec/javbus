@@ -1,5 +1,5 @@
 
 .idea/
-result.csv
-
 *.pyc
+
+logs.txt

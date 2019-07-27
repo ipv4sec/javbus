@@ -11,3 +11,5 @@ import scrapy
 class JavbusItem(scrapy.Item):
     name = scrapy.Field()
     magnet = scrapy.Field()
+
+

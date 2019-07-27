@@ -2,6 +2,7 @@
 
 import csv
 import scrapy
+from scrapy.exceptions import DropItem
 
 class JavbusPipeline(object):
 
@@ -17,21 +18,15 @@ class JavbusPipeline(object):
         with open('result.csv') as csvfile:
             csv_reader = csv.reader(csvfile)
             for row in csv_reader:
-                print(row)
-                self.stats.set_value(row[1], 1)
+                if len(row) == 2:
+                    self.stats.set_value(row[1], 1)
 
     def close_spider(self, spider):
         pass
 
     def process_item(self, item, spider):
-        # print('Alreday Has Done')
-        # if item == 'magnet,name':
-        #     return item
-        # print(self.stats)
-        # print(item[85:-2])
-        # print(self.stats.get_value(item[85:-2]))
-        # if self.stats.get_value(item[85:-2]) is None:
-        #     print('Alreday Has Done')
-        #     print(self.stats.get_value(item[85:-2]))
-        #     scrapy.spiders.crawl.CrawlSpider.close(spider, "Alreday Has Done")
+        if item['name'] == 'name':
+            return item
+        if self.stats.get_value(item['name']) is not None:
+            raise DropItem("movie passed %s" % self.stats.get_value(item['name']))
         return item

@@ -11,12 +11,12 @@ from javbus.items import JavbusItem
 class CdnbusSpider(scrapy.Spider):
 
     name = 'cdnbus'
-    allowed_domains = ['www.cdnbus.life']
-    start_urls = ['https://www.cdnbus.life/page/1']
+    allowed_domains = ['www.busdmm.men']
+    start_urls = ['https://www.busdmm.men/genre/hd/1']
 
     headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
-            'referer': 'https://www.cdnbus.life/'
+            'referer': 'https://www.busdmm.men/'
     }
 
 
@@ -26,16 +26,16 @@ class CdnbusSpider(scrapy.Spider):
         for movie in movies:
             detail_url = movie.xpath('@href').extract()[0]
             print(detail_url)
-            yield scrapy.Request(detail_url, callback=self.parse_item, meta= {'name': detail_url[24:]})
+            yield scrapy.Request(detail_url, callback=self.parse_item, meta= {'name': detail_url[23:]})
         next_page = response.xpath('//*[@id="next"]/@href').extract_first()
         if next_page is not None:
             next_page = response.urljoin(next_page)
             print(next_page)
-            yield scrapy.Request(next_page, callback=self.parse)
+            # yield scrapy.Request(next_page, callback=self.parse)
 
     def parse_item(self, response):
         gid = re.search('(\d{11})(?=;)', response.text).group()
-        magnet_request_url = 'https://www.cdnbus.life/ajax/uncledatoolsbyajax.php?gid=' + gid + '&uc=0'
+        magnet_request_url = 'https://www.busdmm.men/ajax/uncledatoolsbyajax.php?gid=' + gid + '&uc=0'
         res = requests.get(magnet_request_url, headers=self.headers)
         d = pq(res.text)
         for value in d("a").items():

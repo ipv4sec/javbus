@@ -19,19 +19,15 @@ class CdnbusSpider(scrapy.Spider):
             'referer': 'https://www.busdmm.men/'
     }
 
-
     def parse(self, response):
-        pass
         movies = response.xpath('//a[@class="movie-box"]')
         for movie in movies:
             detail_url = movie.xpath('@href').extract()[0]
-            print(detail_url)
             yield scrapy.Request(detail_url, callback=self.parse_item, meta= {'name': detail_url[23:]})
         next_page = response.xpath('//*[@id="next"]/@href').extract_first()
         if next_page is not None:
             next_page = response.urljoin(next_page)
-            print(next_page)
-            # yield scrapy.Request(next_page, callback=self.parse)
+            yield scrapy.Request(next_page, callback=self.parse)
 
     def parse_item(self, response):
         gid = re.search('(\d{11})(?=;)', response.text).group()
